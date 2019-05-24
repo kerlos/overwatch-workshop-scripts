@@ -1,0 +1,1009 @@
+rule("INIT VARIABLE")
+{
+	event
+	{
+		Ongoing - Global;
+	}
+
+	actions
+	{
+		Set Global Variable(A, Empty Array);
+		Set Global Variable(B, Empty Array);
+		Modify Global Variable(B, Append To Array, Vector(-28.270, 4.550, -127.480));
+		Modify Global Variable(B, Append To Array, Vector(10.840, 8.300, -83.180));
+		Modify Global Variable(B, Append To Array, Vector(60.040, 9.350, -101.300));
+		Modify Global Variable(B, Append To Array, Vector(97.670, 13.410, -66.740));
+		Modify Global Variable(B, Append To Array, Vector(29.730, 8.350, -29.370));
+		Modify Global Variable(B, Append To Array, Vector(59.710, 7.410, -65.930));
+		Modify Global Variable(B, Append To Array, Vector(34.770, 13.430, -25.870));
+		Modify Global Variable(B, Append To Array, Vector(52.990, 15.430, -75.200));
+		Modify Global Variable(B, Append To Array, Vector(-46.430, 5.930, -100.800));
+		Modify Global Variable(B, Append To Array, Vector(-6.850, 11.430, -119.510));
+		Set Global Variable(B, Randomized Array(Global Variable(B)));
+		Set Global Variable(C, Array Slice(Global Variable(B), 0, 5));
+		Set Global Variable(D, Empty Array);
+		Set Global Variable(E, 0);
+		Set Global Variable(F, 3);
+		Set Global Variable(G, Empty Array);
+		Set Objective Description(All Players(Team 1), String("{0} {1}", String("Capture", Null, Null, Null), String("Points", Null, Null,
+			Null), Null), Visible To and String);
+		Set Objective Description(All Players(Team 2), String("{0} {1}", String("Eliminate", Null, Null, Null), String("Enemy", Null, Null,
+			Null), Null), Visible To and String);
+		Set Global Variable(I, Empty Array);
+		Modify Global Variable(I, Append To Array, Vector(14.820, 10.250, -10.620));
+		Modify Global Variable(I, Append To Array, Vector(-37.540, 11.250, -120.070));
+		Modify Global Variable(I, Append To Array, Vector(16.870, 8.250, -77.580));
+		Set Global Variable(L, 0);
+		Set Global Variable(Z, 0);
+		Set Global Variable(Y, 0);
+		Start Forcing Player To Be Hero(All Players(Team 1), Hero(Mei));
+		Start Forcing Player To Be Hero(All Players(Team 2), Hero(Brigitte));
+		Set Move Speed(All Players(Team 2), 110);
+		Disable Built-In Game Mode Respawning(All Players(All Teams));
+		Create HUD Text(All Players(All Teams), String("{0}: {1}", String("Alive", Null, Null, Null), Count Of(All Living Players(Team 1)),
+			Null), Null, Null, Right, 0, White, White, White, Visible To and String);
+		Set Global Variable(V, Empty Array);
+		Modify Global Variable(V, Append To Array, 0);
+		Modify Global Variable(V, Append To Array, 0);
+		Modify Global Variable(V, Append To Array, 0);
+		Modify Global Variable(V, Append To Array, 0);
+		Modify Global Variable(V, Append To Array, 0);
+		Set Global Variable(M, Empty Array);
+		Set Global Variable(N, Empty Array);
+		Set Global Variable(O, Empty Array);
+		Set Global Variable(P, 0);
+		Modify Global Variable(O, Add, 0);
+		Modify Global Variable(O, Add, 0);
+		Modify Global Variable(O, Add, 0);
+		Set Global Variable(U, 0);
+		Set Global Variable(T, 0);
+		Set Global Variable(S, 0);
+	}
+}
+
+rule("INIT SPAWN POINT")
+{
+	event
+	{
+		Ongoing - Global;
+	}
+
+	actions
+	{
+		Modify Global Variable(A, Append To Array, Vector(39.327, 9.298, -97.999));
+		Modify Global Variable(A, Append To Array, Vector(1.446, 7.201, -96.729));
+		Modify Global Variable(A, Append To Array, Vector(-8.241, 4.301, -122.622));
+		Modify Global Variable(A, Append To Array, Vector(-26.291, 5.801, -95.410));
+		Modify Global Variable(A, Append To Array, Vector(58.356, 7.299, -33.262));
+		Modify Global Variable(A, Append To Array, Vector(25.487, 14.298, -42.377));
+		Modify Global Variable(A, Append To Array, Vector(90.660, 10.698, -50.677));
+		Modify Global Variable(A, Append To Array, Vector(47.481, 15.301, -59.870));
+		Set Global Variable(A, Randomized Array(Global Variable(A)));
+	}
+}
+
+rule("CREATE ALL ESCAPE WAY")
+{
+	event
+	{
+		Ongoing - Global;
+	}
+
+	actions
+	{
+		Create Effect(All Players(All Teams), Sphere, White, Value In Array(Global Variable(I), 0), 2, Visible To Position and Radius);
+		Modify Global Variable(N, Append To Array, Last Created Entity);
+		Create Effect(All Players(All Teams), Sphere, White, Value In Array(Global Variable(I), 1), 2, Visible To Position and Radius);
+		Modify Global Variable(N, Append To Array, Last Created Entity);
+		Create Effect(All Players(All Teams), Sphere, White, Value In Array(Global Variable(I), 2), 2, Visible To Position and Radius);
+		Modify Global Variable(N, Append To Array, Last Created Entity);
+	}
+}
+
+rule("CREATE CAPTURE POINT")
+{
+	event
+	{
+		Ongoing - Global;
+	}
+
+	conditions
+	{
+		Count Of(Global Variable(D)) < 5;
+	}
+
+	actions
+	{
+		Wait(0.250, Abort When False);
+		Create Effect(All Players(All Teams), Ring, Blue, Value In Array(Global Variable(C), Count Of(Global Variable(D))), 1, Visible To);
+		Modify Global Variable(D, Append To Array, Last Created Entity);
+		Modify Global Variable(G, Append To Array, 0);
+		Loop;
+	}
+}
+
+rule("TELEPORT PLAYER")
+{
+	event
+	{
+		Ongoing - Each Player;
+		All;
+		All;
+	}
+
+	conditions
+	{
+		Is Game In Progress == True;
+		Has Spawned(Event Player) == True;
+	}
+
+	actions
+	{
+		Teleport(Event Player, Value In Array(Global Variable(A), Global Variable(T)));
+		Modify Global Variable(T, Add, 1);
+		Set Status(Event Player, Null, Invincible, 1);
+	}
+}
+
+rule("SCORE TEXT")
+{
+	event
+	{
+		Ongoing - Global;
+	}
+
+	actions
+	{
+		Create HUD Text(All Players(All Teams), String("Captured", Null, Null, Null), Null, String("{0} / {1}", Count Of(Filtered Array(
+			Global Variable(V), Compare(Current Array Element, ==, 1))), Global Variable(F), String("Points", Null, Null, Null)), Top, 0,
+			White, White, White, Visible To and String);
+		Create HUD Text(All Players(Team 1), String("{0} {1} {2}", String("Point", Null, Null, Null), Absolute Value(1), String("{0}%",
+			Value In Array(Global Variable(G), 0), Null, Null)), Null, Null, Left, 1, White, White, White, Visible To and String);
+		Create HUD Text(All Players(Team 1), String("{0} {1} {2}", String("Point", Null, Null, Null), Absolute Value(2), String("{0}%",
+			Value In Array(Global Variable(G), 1), Null, Null)), Null, Null, Left, 2, White, White, White, Visible To and String);
+		Create HUD Text(All Players(Team 1), String("{0} {1} {2}", String("Point", Null, Null, Null), Absolute Value(3), String("{0}%",
+			Value In Array(Global Variable(G), 2), Null, Null)), Null, Null, Left, 3, White, White, White, Visible To and String);
+		Create HUD Text(All Players(Team 1), String("{0} {1} {2}", String("Point", Null, Null, Null), Absolute Value(4), String("{0}%",
+			Value In Array(Global Variable(G), 3), Null, Null)), Null, Null, Left, 4, White, White, White, Visible To and String);
+		Create HUD Text(All Players(Team 1), String("{0} {1} {2}", String("Point", Null, Null, Null), Absolute Value(5), String("{0}%",
+			Value In Array(Global Variable(G), 4), Null, Null)), Null, Null, Left, 5, White, White, White, Visible To and String);
+	}
+}
+
+rule("CAPTURE POINT EFFECT START")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is True For Any(Global Variable(C), Compare(Distance Between(Current Array Element, Event Player), <, 2)) == True;
+		Is Alive(Event Player) == True;
+	}
+
+	actions
+	{
+		Destroy Effect(Player Variable(Event Player, A));
+		Create Effect(All Players(All Teams), Energy Sound, White, Event Player, 30, Visible To Position and Radius);
+		Set Player Variable(Event Player, A, Last Created Entity);
+		Set Player Variable(Event Player, B, 1);
+	}
+}
+
+rule("CAPTURE POINT EFFECT STOP")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is True For Any(Global Variable(C), Compare(Distance Between(Current Array Element, Event Player), <, 2)) == False;
+	}
+
+	actions
+	{
+		Destroy Effect(Player Variable(Event Player, A));
+		Set Player Variable(Event Player, B, 2);
+	}
+}
+
+rule("SKILL CHECK Start")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Player Variable(Event Player, B) == 1;
+		Player Variable(Event Player, D) == 0;
+		Is Alive(Event Player) == True;
+	}
+
+	actions
+	{
+		Wait(Random Real(3, 5), Abort When False);
+		Play Effect(All Players(All Teams), Debuff Impact Sound, Red, Event Player, 5);
+		Set Player Variable(Event Player, D, Random Integer(5, 8));
+		Create Effect(Event Player, Ring, Red, Value In Array(Global Variable(C), Player Variable(Event Player, H)), Player Variable(
+			Event Player, D), Position and Radius);
+		Set Player Variable(Event Player, C, Last Created Entity);
+		Chase Player Variable Over Time(Event Player, D, 0, Random Real(0.750, 1.750), Destination and Duration);
+		Loop If Condition Is True;
+	}
+}
+
+rule("Skill check penalty")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is On Ground(Event Player) == True;
+		Is Alive(Event Player) == True;
+		Player Variable(Event Player, B) > 0;
+		And(Compare(Player Variable(Event Player, D), >, 0), Compare(Player Variable(Event Player, D), <, 0.500)) == True;
+	}
+
+	actions
+	{
+		Abort If(Compare(Value In Array(Global Variable(V), Player Variable(Event Player, H)), ==, 1));
+		Abort If(Compare(Player Variable(Event Player, D), ==, 0));
+		Set Player Variable(Event Player, D, 0);
+		Set Global Variable At Index(G, Player Variable(Event Player, H), Subtract(Value In Array(Global Variable(G), Player Variable(
+			Event Player, H)), Min(Value In Array(Global Variable(G), Player Variable(Event Player, H)), 20)));
+		Play Effect(All Players(All Teams), Bad Explosion, Red, Position Of(Event Player), 30);
+		Play Effect(All Players(All Teams), Explosion Sound, Red, Position Of(Event Player), 30);
+		Abort If(Compare(Player Variable(Event Player, B), ==, 0));
+		Damage(Event Player, Null, 15);
+		Set Player Variable(Event Player, R, 1);
+	}
+}
+
+rule("Skill check penalty MARK")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Player Variable(Event Player, D) < 0.500;
+		Is On Ground(Event Player) == True;
+		Is Alive(Event Player) == True;
+		Player Variable(Event Player, B) > 0;
+		Player Variable(Event Player, R) == 1;
+	}
+
+	actions
+	{
+		Abort If(Compare(Value In Array(Global Variable(V), Player Variable(Event Player, H)), ==, 1));
+		Skip If(Compare(Player Variable(Event Player, I), !=, 0), 6);
+		Create Icon(All Players(All Teams), Value In Array(Global Variable(C), Player Variable(Event Player, H)), Exclamation Mark,
+			Visible To and Position, Red, True);
+		Set Player Variable(Event Player, I, Last Created Entity);
+		Set Player Variable(Event Player, R, 0);
+		Wait(5, Ignore Condition);
+		Destroy Icon(Player Variable(Event Player, I));
+		Set Player Variable(Event Player, I, 0);
+	}
+}
+
+rule("CAPTURE POINT 1")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Distance Between(Value In Array(Global Variable(C), 0), Event Player) < 2;
+		Value In Array(Global Variable(G), 0) < 100;
+		Is Alive(Event Player) == True;
+	}
+
+	actions
+	{
+		Set Global Variable At Index(G, 0, Add(Value In Array(Global Variable(G), 0), 1));
+		Wait(0.400, Restart When True);
+		Big Message(Event Player, String("{0}%", Value In Array(Global Variable(G), 0), Null, Null));
+		Skip If(Compare(Value In Array(Global Variable(G), 0), <, 100), 8);
+		Big Message(All Players(All Teams), String("{0} {1} {2}", String("Point", Null, Null, Null), Absolute Value(1), String("Captured",
+			Null, Null, Null)));
+		Destroy Effect(Player Variable(Event Player, A));
+		Play Effect(All Players(All Teams), Ring Explosion, White, Position Of(Event Player), 30);
+		Play Effect(All Players(All Teams), Ring Explosion Sound, White, Position Of(Event Player), 30);
+		Set Player Variable(Event Player, B, 0);
+		Destroy Effect(Value In Array(Global Variable(D), 0));
+		Set Global Variable At Index(V, 0, 1);
+		Abort;
+		Skip If(Compare(Player Variable(Event Player, H), ==, 0), 1);
+		Set Player Variable(Event Player, H, 0);
+		Loop If Condition Is True;
+	}
+}
+
+rule("CAPTURE POINT 2")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Distance Between(Value In Array(Global Variable(C), 1), Event Player) < 2;
+		Value In Array(Global Variable(G), 1) < 100;
+		Is Alive(Event Player) == True;
+	}
+
+	actions
+	{
+		Set Global Variable At Index(G, 1, Add(Value In Array(Global Variable(G), 1), 1));
+		Wait(0.400, Restart When True);
+		Big Message(Event Player, String("{0}%", Value In Array(Global Variable(G), 1), Null, Null));
+		Skip If(Compare(Value In Array(Global Variable(G), 1), <, 100), 8);
+		Big Message(All Players(All Teams), String("{0} {1} {2}", String("Point", Null, Null, Null), Absolute Value(2), String("Captured",
+			Null, Null, Null)));
+		Destroy Effect(Player Variable(Event Player, A));
+		Play Effect(All Players(All Teams), Ring Explosion, White, Position Of(Event Player), 30);
+		Play Effect(All Players(All Teams), Ring Explosion Sound, White, Position Of(Event Player), 30);
+		Set Player Variable(Event Player, B, 0);
+		Destroy Effect(Value In Array(Global Variable(D), 1));
+		Set Global Variable At Index(V, 1, 1);
+		Abort;
+		Skip If(Compare(Player Variable(Event Player, H), ==, 1), 1);
+		Set Player Variable(Event Player, H, 1);
+		Loop If Condition Is True;
+	}
+}
+
+rule("CAPTURE POINT 3")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Distance Between(Value In Array(Global Variable(C), 2), Event Player) < 2;
+		Value In Array(Global Variable(G), 2) < 100;
+		Is Alive(Event Player) == True;
+	}
+
+	actions
+	{
+		Set Global Variable At Index(G, 2, Add(Value In Array(Global Variable(G), 2), 1));
+		Wait(0.400, Restart When True);
+		Big Message(Event Player, String("{0}%", Value In Array(Global Variable(G), 2), Null, Null));
+		Skip If(Compare(Value In Array(Global Variable(G), 2), <, 100), 8);
+		Big Message(All Players(All Teams), String("{0} {1} {2}", String("Point", Null, Null, Null), Absolute Value(3), String("Captured",
+			Null, Null, Null)));
+		Destroy Effect(Player Variable(Event Player, A));
+		Play Effect(All Players(All Teams), Ring Explosion, White, Position Of(Event Player), 30);
+		Play Effect(All Players(All Teams), Ring Explosion Sound, White, Position Of(Event Player), 30);
+		Set Player Variable(Event Player, B, 0);
+		Destroy Effect(Value In Array(Global Variable(D), 2));
+		Set Global Variable At Index(V, 2, 1);
+		Abort;
+		Skip If(Compare(Player Variable(Event Player, H), ==, 2), 1);
+		Set Player Variable(Event Player, H, 2);
+		Loop If Condition Is True;
+	}
+}
+
+rule("CAPTURE POINT 4")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Distance Between(Value In Array(Global Variable(C), 3), Event Player) < 2;
+		Value In Array(Global Variable(G), 3) < 100;
+		Is Alive(Event Player) == True;
+	}
+
+	actions
+	{
+		Set Global Variable At Index(G, 3, Add(Value In Array(Global Variable(G), 3), 1));
+		Wait(0.400, Restart When True);
+		Big Message(Event Player, String("{0}%", Value In Array(Global Variable(G), 3), Null, Null));
+		Skip If(Compare(Value In Array(Global Variable(G), 3), <, 100), 8);
+		Big Message(All Players(All Teams), String("{0} {1} {2}", String("Point", Null, Null, Null), Absolute Value(4), String("Captured",
+			Null, Null, Null)));
+		Destroy Effect(Player Variable(Event Player, A));
+		Play Effect(All Players(All Teams), Ring Explosion, White, Position Of(Event Player), 30);
+		Play Effect(All Players(All Teams), Ring Explosion Sound, White, Position Of(Event Player), 30);
+		Set Player Variable(Event Player, B, 0);
+		Destroy Effect(Value In Array(Global Variable(D), 3));
+		Set Global Variable At Index(V, 3, 1);
+		Abort;
+		Skip If(Compare(Player Variable(Event Player, H), ==, 3), 1);
+		Set Player Variable(Event Player, H, 3);
+		Loop If Condition Is True;
+	}
+}
+
+rule("CAPTURE POINT 5")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Distance Between(Value In Array(Global Variable(C), 4), Event Player) < 2;
+		Value In Array(Global Variable(G), 4) < 100;
+		Is Alive(Event Player) == True;
+	}
+
+	actions
+	{
+		Set Global Variable At Index(G, 4, Add(Value In Array(Global Variable(G), 4), 1));
+		Wait(0.400, Restart When True);
+		Big Message(Event Player, String("{0}%", Value In Array(Global Variable(G), 4), Null, Null));
+		Skip If(Compare(Value In Array(Global Variable(G), 4), <, 100), 8);
+		Big Message(All Players(All Teams), String("{0} {1} {2}", String("Point", Null, Null, Null), Absolute Value(5), String("Captured",
+			Null, Null, Null)));
+		Destroy Effect(Player Variable(Event Player, A));
+		Play Effect(All Players(All Teams), Ring Explosion, White, Position Of(Event Player), 30);
+		Play Effect(All Players(All Teams), Ring Explosion Sound, White, Position Of(Event Player), 30);
+		Set Player Variable(Event Player, B, 0);
+		Destroy Effect(Value In Array(Global Variable(D), 4));
+		Set Global Variable At Index(V, 4, 1);
+		Abort;
+		Skip If(Compare(Player Variable(Event Player, H), ==, 4), 1);
+		Set Player Variable(Event Player, H, 4);
+		Loop If Condition Is True;
+	}
+}
+
+rule("ESCAPE CHECK")
+{
+	event
+	{
+		Ongoing - Global;
+	}
+
+	conditions
+	{
+		Count Of(Filtered Array(Global Variable(V), Compare(Current Array Element, ==, 1))) >= 3;
+	}
+
+	actions
+	{
+		Set Global Variable(Z, 1);
+		Big Message(All Players(All Teams), String("{0} {1}", String("Start", Null, Null, Null), String("Final Mission", Null, Null, Null),
+			Null));
+	}
+}
+
+rule("TEAM 1 ALL DEAD")
+{
+	event
+	{
+		Ongoing - Global;
+	}
+
+	conditions
+	{
+		Count Of(All Living Players(Team 1)) == 0;
+		Total Time Elapsed > 30;
+		Global Variable(P) == 0;
+	}
+
+	actions
+	{
+		Declare Team Victory(Team 2);
+	}
+}
+
+rule("TEAM 1 escaped")
+{
+	event
+	{
+		Ongoing - Global;
+	}
+
+	conditions
+	{
+		Count Of(All Living Players(Team 1)) == 0;
+		Total Time Elapsed > 30;
+		Global Variable(P) > 0;
+	}
+
+	actions
+	{
+		Declare Team Victory(Team 1);
+	}
+}
+
+rule("TEAm 1 DEAD")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is Dead(Event Player) == True;
+	}
+
+	actions
+	{
+		Disable Built-In Game Mode Respawning(Event Player);
+		Destroy Effect(Player Variable(Event Player, A));
+		Set Player Variable(Event Player, B, 0);
+	}
+}
+
+rule("SET OBJECTIVE ICON TEAM 2")
+{
+	event
+	{
+		Ongoing - Global;
+	}
+
+	actions
+	{
+		Create Icon(All Players(Team 2), Value In Array(Global Variable(C), 0), X, Visible To and Position, Yellow, False);
+		Create Icon(All Players(Team 2), Value In Array(Global Variable(C), 1), X, Visible To and Position, Yellow, False);
+		Create Icon(All Players(Team 2), Value In Array(Global Variable(C), 2), X, Visible To and Position, Yellow, False);
+		Create Icon(All Players(Team 2), Value In Array(Global Variable(C), 3), X, Visible To and Position, Yellow, False);
+		Create Icon(All Players(Team 2), Value In Array(Global Variable(C), 4), X, Visible To and Position, Yellow, False);
+	}
+}
+
+rule("Capturing NOTICE TEAM 2")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Player Variable(Event Player, B) == 1;
+	}
+
+	actions
+	{
+		Big Message(All Players(Team 2), String("{0} {1}", String("Enemy", Null, Null, Null), String("Capturing", Null, Null, Null),
+			Null));
+	}
+}
+
+rule("SET LAST ALIVE ESCAPE POINT")
+{
+	event
+	{
+		Ongoing - Global;
+	}
+
+	actions
+	{
+		Set Global Variable(W, Randomized Array(Global Variable(I)));
+	}
+}
+
+rule("ACTIVE LAST ALIVE")
+{
+	event
+	{
+		Ongoing - Global;
+	}
+
+	conditions
+	{
+		Count Of(All Living Players(Team 1)) == 1;
+		Total Time Elapsed > 10;
+	}
+
+	actions
+	{
+		Big Message(All Players(All Teams), String("{0}, {1}", String("{0} {1}", String("Final Player", Null, Null, Null), String("Alive",
+			Null, Null, Null), Null), String("Final Attempt", Null, Null, Null), Null));
+		Set Global Variable(X, 1);
+	}
+}
+
+rule("ESCAPE LAST ALIVE")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Global Variable(X) == 2;
+		Is True For Any(Global Variable(W), Compare(Distance Between(Current Array Element, Event Player), <, 2)) == True;
+		Compare(Global Variable(P), >=, 100) == True;
+	}
+
+	actions
+	{
+		Declare Team Victory(Team 1);
+	}
+}
+
+rule("Team 2 slow on hit")
+{
+	event
+	{
+		Player dealt damage;
+		Team 2;
+		All;
+	}
+
+	actions
+	{
+		Set Move Speed(Event Player, 50);
+		Wait(1, Ignore Condition);
+		Set Move Speed(Event Player, 110);
+	}
+}
+
+rule("SPAWN ORB")
+{
+	event
+	{
+		Ongoing - Global;
+	}
+
+	conditions
+	{
+		Global Variable(X) == 1;
+		Global Variable(S) == 0;
+	}
+
+	actions
+	{
+		Create Effect(All Players(All Teams), Orb, Purple, Value In Array(Global Variable(B), 5), 0.100, Visible To Position and Radius);
+		Modify Global Variable(M, Append To Array, Last Created Entity);
+		Set Global Variable(S, 1);
+	}
+}
+
+rule("PICK UP ORB")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Global Variable(X) == 1;
+		Distance Between(Value In Array(Global Variable(B), 5), Event Player) < 2;
+	}
+
+	actions
+	{
+		Create Effect(All Players(All Teams), Sphere, Purple, Value In Array(Global Variable(W), 0), 2.100,
+			Visible To Position and Radius);
+		Set Global Variable(X, 2);
+		Destroy Effect(Value In Array(Global Variable(M), 0));
+		Big Message(All Players(Team 1), String("{0} {1} {2}", String("Final Attempt", Null, Null, Null), String("Point", Null, Null,
+			Null), String("Unlocked", Null, Null, Null)));
+	}
+}
+
+rule("ESCAPING LAST ALIVE")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Global Variable(X) == 2;
+		Distance Between(Value In Array(Global Variable(W), 0), Event Player) < 2.500;
+		Is Alive(Event Player) == True;
+	}
+
+	actions
+	{
+		Modify Global Variable(P, Add, 1);
+		Wait(0.030, Restart When True);
+		Big Message(Event Player, String("{0}%", Global Variable(P), Null, Null));
+		Loop If Condition Is True;
+	}
+}
+
+rule("ESCAPING EFFECT START")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is True For Any(Global Variable(I), Compare(Distance Between(Current Array Element, Event Player), <, 2)) == True;
+		Is Alive(Event Player) == True;
+		Global Variable(E) >= 3;
+	}
+
+	actions
+	{
+		Destroy Effect(Player Variable(Event Player, K));
+		Create Effect(All Players(All Teams), Energy Sound, White, Event Player, 30, Visible To Position and Radius);
+		Set Player Variable(Event Player, K, Last Created Entity);
+	}
+}
+
+rule("ESCAPING EFFECT STOP")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is True For Any(Global Variable(I), Compare(Distance Between(Current Array Element, Event Player), <, 2)) == False;
+		Global Variable(E) >= 3;
+	}
+
+	actions
+	{
+		Destroy Effect(Player Variable(Event Player, K));
+	}
+}
+
+rule("ESCAPING LAST ALIVE EFFECT START")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is Alive(Event Player) == True;
+		Global Variable(X) == 2;
+		Distance Between(Value In Array(Global Variable(W), 0), Event Player) < 2.500;
+	}
+
+	actions
+	{
+		Destroy Effect(Player Variable(Event Player, K));
+		Create Effect(All Players(All Teams), Energy Sound, White, Event Player, 30, Visible To Position and Radius);
+		Set Player Variable(Event Player, K, Last Created Entity);
+	}
+}
+
+rule("ESCAPING LAST ALIVE EFFECT STOP")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Global Variable(X) == 2;
+		Distance Between(Value In Array(Global Variable(W), 0), Event Player) >= 2.500;
+	}
+
+	actions
+	{
+		Destroy Effect(Player Variable(Event Player, K));
+	}
+}
+
+rule("ESCAPING point 1")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Distance Between(Value In Array(Global Variable(I), 0), Event Player) < 2.500;
+		Is Alive(Event Player) == True;
+		Global Variable(Z) == 1;
+	}
+
+	actions
+	{
+		Set Global Variable At Index(O, 0, Add(Value In Array(Global Variable(O), 0), 1));
+		Wait(0.100, Restart When True);
+		Big Message(Event Player, String("{0}%", Value In Array(Global Variable(O), 0), Null, Null));
+		Skip If(Compare(Value In Array(Global Variable(O), 0), <, 100), 4);
+		Create Effect(All Players(All Teams), Sphere, Green, Value In Array(Global Variable(I), 0), 2.100, Visible To Position and Radius);
+		Big Message(All Players(All Teams), String("{0} {1}", Event Player, String("Rescued", Null, Null, Null), Null));
+		Kill(Event Player, Null);
+		Modify Global Variable(P, Add, 1);
+		Loop If Condition Is True;
+	}
+}
+
+rule("ESCAPING point 2")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Distance Between(Value In Array(Global Variable(I), 1), Event Player) < 2.500;
+		Is Alive(Event Player) == True;
+		Global Variable(Z) == 1;
+	}
+
+	actions
+	{
+		Set Global Variable At Index(O, 1, Add(Value In Array(Global Variable(O), 1), 1));
+		Wait(0.100, Restart When True);
+		Big Message(Event Player, String("{0}%", Value In Array(Global Variable(O), 1), Null, Null));
+		Skip If(Compare(Value In Array(Global Variable(O), 1), <, 100), 4);
+		Create Effect(All Players(All Teams), Sphere, Green, Value In Array(Global Variable(I), 1), 2.100, Visible To Position and Radius);
+		Big Message(All Players(All Teams), String("{0} {1}", Event Player, String("Rescued", Null, Null, Null), Null));
+		Kill(Event Player, Null);
+		Modify Global Variable(P, Add, 1);
+		Loop If Condition Is True;
+	}
+}
+
+rule("ESCAPING point 3")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Distance Between(Value In Array(Global Variable(I), 2), Event Player) < 2.500;
+		Is Alive(Event Player) == True;
+		Global Variable(Z) == 1;
+	}
+
+	actions
+	{
+		Set Global Variable At Index(O, 2, Add(Value In Array(Global Variable(O), 2), 1));
+		Wait(0.100, Restart When True);
+		Big Message(Event Player, String("{0}%", Value In Array(Global Variable(O), 2), Null, Null));
+		Skip If(Compare(Value In Array(Global Variable(O), 2), <, 100), 4);
+		Create Effect(All Players(All Teams), Sphere, Green, Value In Array(Global Variable(I), 2), 2.100, Visible To Position and Radius);
+		Big Message(All Players(All Teams), String("{0} {1}", Event Player, String("Rescued", Null, Null, Null), Null));
+		Kill(Event Player, Null);
+		Modify Global Variable(P, Add, 1);
+		Loop If Condition Is True;
+	}
+}
+
+rule("DEBUG")
+{
+	event
+	{
+		Ongoing - Each Player;
+		All;
+		All;
+	}
+
+	conditions
+	{
+		Global Variable(U) == 1;
+		Is Button Held(Event Player, Crouch) == True;
+		Is Button Held(Event Player, Jump) == True;
+	}
+
+	actions
+	{
+		Teleport(Event Player, Value In Array(Global Variable(A), Global Variable(T)));
+		Modify Global Variable(T, Add, 1);
+	}
+}
+
+rule("DEBUG UI")
+{
+	event
+	{
+		Ongoing - Global;
+	}
+
+	conditions
+	{
+		Global Variable(U) == True;
+	}
+
+	actions
+	{
+		Create HUD Text(All Players(All Teams), String("-> {0}", Global Variable(T), Null, Null), Null, Null, Left, 0, Yellow, White,
+			White, Visible To and String);
+		Set Global Variable At Index(G, 0, 99);
+		Set Global Variable At Index(G, 1, 99);
+		Set Global Variable At Index(G, 2, 99);
+		Set Global Variable At Index(G, 3, 99);
+		Set Global Variable At Index(G, 4, 99);
+	}
+}
+
+rule("KILL LATE PLAYERS")
+{
+	event
+	{
+		Ongoing - Each Player;
+		All;
+		All;
+	}
+
+	conditions
+	{
+		Has Status(Event Player, Invincible) == True;
+		Total Time Elapsed > 59;
+		Has Spawned(Event Player) == True;
+	}
+
+	actions
+	{
+		Kill(Event Player, Null);
+		Big Message(Event Player, String("{0} {1}", String("Wait", Null, Null, Null), String("Next Round", Null, Null, Null), Null));
+	}
+}
